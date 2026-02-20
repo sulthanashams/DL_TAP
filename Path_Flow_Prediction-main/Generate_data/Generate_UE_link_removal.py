@@ -4,9 +4,9 @@ Created on Mon Jan 12 04:54:17 2026
 
 @author: Cosmos
 This script performs robustness testing by:
-1️⃣ Randomly removing a percentage of links from the TNTP network.
-2️⃣ Cleaning OD pair paths that use those removed links.
-3️⃣ Solving UE for all OD matrices using the modified network and filtered paths.
+1️ Randomly removing a percentage of links from the TNTP network.
+2️ Cleaning OD pair paths that use those removed links.
+3️ Solving UE for all OD matrices using the modified network and filtered paths.
 """
 
 import os
@@ -91,8 +91,8 @@ def remove_links_from_path(pair_path, remove_ids):
 
 
     total_pairs = len(pair_path)
-    print(f"🧹 Removed {removed_paths_count} infeasible paths from pair_path.")
-    print(f"🚫 OD pairs with **no feasible paths left**: {od_pairs_lost} / {total_pairs} "
+    print(f" Removed {removed_paths_count} infeasible paths from pair_path.")
+    print(f" OD pairs with **no feasible paths left**: {od_pairs_lost} / {total_pairs} "
           f"({od_pairs_lost/total_pairs*100:.2f}%)")
 
     return dict(new_dict)
@@ -127,7 +127,7 @@ def main():
     num_processes = 10#min(60, max(1, os.cpu_count() - 1))
 
     # --- Load precomputed paths ---
-    print(f"📂 Loading precomputed pair_path from {PAIR_FILE}")
+    print(f" Loading precomputed pair_path from {PAIR_FILE}")
     with open(PAIR_FILE, 'rb') as f:
         pair_path = pickle.load(f)
         
@@ -151,7 +151,7 @@ def main():
     # --- Create modified network file ---
     new_net_file = NET_FILE.replace(".tntp", f"_{REMOVE_PERCENT}pct_removed.tntp")
     remove_links_from_tntp(NET_FILE, new_net_file, remove_ids)
-    print(f"✅ New network saved to: {new_net_file}")
+    print(f" New network saved to: {new_net_file}")
 
     # --- Clean pair_path ---
     new_pair_path = remove_links_from_path(pair_path, remove_ids)
@@ -159,7 +159,7 @@ def main():
     new_pair_path_file = PAIR_FILE.replace(".pkl", f"_{REMOVE_PERCENT}pct_removed.pkl")
     with open(new_pair_path_file, 'wb') as f:
         pickle.dump(new_pair_path, f)
-    print(f"✅ Updated pair_path saved to: {new_pair_path_file}")
+    print(f" Updated pair_path saved to: {new_pair_path_file}")
     
     for i, (od_pair, paths) in enumerate(new_pair_path.items()):
         print(f"OD pair {od_pair}: {len(paths)} paths")
@@ -208,7 +208,7 @@ def main():
                     sys.exit(1)
 
     elapsed_minutes = (time.time() - start_time) / 60
-    print(f"\n✅ Finished all UE iterations. Total time: {elapsed_minutes:.2f} minutes")
+    print(f"\n Finished all UE iterations. Total time: {elapsed_minutes:.2f} minutes")
 
 
 # ========================================
