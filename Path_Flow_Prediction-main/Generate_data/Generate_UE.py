@@ -19,24 +19,7 @@ from math import ceil
 os.environ["GUROBI_LICENSE_FILE"] = r"E:\sshams\DL_TAP\gurobi.lic"
 
 # ---------------- Configuration ----------------
-# net_file = '../Generate_data/SiouxFalls/Topology_Variants_50/variant_15.tntp'
-# demand_dir = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\SiouxFalls\Topology_Variants_50\OD_Matrices_15"
-# output_prefix = '../Generate_data/SiouxFalls/Topology_Variants_50/Output15/SiouxFalls_UE_'
-# path_file = '../Generate_data/SiouxFalls/Topology_Variants_50/unique_paths_var15.pkl'
-# pair_file = '../Generate_data/SiouxFalls/Topology_Variants_50/pair_path_var15.pkl'
 
-# ---------------- Paths ----------------
-# net_file = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\EMA\EMA_net.tntp"
-# demand_dir = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\EMA\OD_Matrices"
-# output_prefix = '../Solution/EMA/Output50/EMA_UE_'
-# path_file = 'EMA/unique_paths_50.pkl'
-# pair_file = 'EMA/pair_path_50.pkl'
-
-# net_file = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\Anaheim\Anaheim_net_link.tntp"
-# demand_dir = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\Anaheim\OD_Matrices_50"
-# output_prefix = '../Solution/Anaheim/Outputtest/Anaheim_UE_'
-# path_file = 'Anaheim/unique_paths_50.pkl'
-# pair_file = 'Anaheim/pair_path_50.pkl'
 
 net_file = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\SiouxFalls\SiouxFalls_net.tntp"
 demand_dir = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\SiouxFalls\OD_Matrices"
@@ -114,7 +97,7 @@ def main():
         print(f"Paths computed and saved to {path_file} and {pair_file}")
 
     # ---------------- Verification of generated paths ----------------
-    print("\n🔍 Verifying computed paths:")
+    print("\n Verifying computed paths:")
     num_pairs = len(pair_path)
     print(f"Total OD pairs with paths: {num_pairs}")
     if num_pairs > 0:
@@ -130,7 +113,7 @@ def main():
     #     print("\nSample path → ID mappings:")
     #     for path, pid in sample_path_ids:
     #         print(f"  ID {pid}: {path}")
-    print("\n✅ Path verification complete.\n")
+    print("\n Path verification complete.\n")
 
         # ---------------- Prepare OD matrices ----------------
     output_dir = os.path.dirname(output_prefix)
@@ -150,10 +133,10 @@ def main():
     
     if existing_indices:
         last_index = existing_indices[-1]
-        print(f"📈 Last completed UE index: {last_index}")
+        print(f" Last completed UE index: {last_index}")
     else:
         last_index = -1
-        print("🆕 No existing UE files found.")
+        print(" No existing UE files found.")
     
     # Get all OD matrix files in demand_dir
     all_files = load_od_files(demand_dir)  # your function from earlier
@@ -161,12 +144,12 @@ def main():
     # Calculate remaining OD matrices to solve
     remaining_files = all_files[last_index + 1:]
     
-    print(f"🧮 Total OD matrices: {len(all_files)}")
-    print(f"✅ Already solved: {last_index + 1}")
-    print(f"🚀 Remaining to compute: {len(remaining_files)}")
+    print(f" Total OD matrices: {len(all_files)}")
+    print(f" Already solved: {last_index + 1}")
+    print(f" Remaining to compute: {len(remaining_files)}")
     
     if not remaining_files:
-        print("🎉 All UE solutions already computed. Nothing to do!")
+        print(" All UE solutions already computed. Nothing to do!")
         sys.exit(0)
     
     # ---------------- Batch processing ----------------
@@ -190,17 +173,17 @@ def main():
     
                     # Check if output saved correctly (no .pkl, just filename)
                     if not os.path.exists(output_file) or os.path.getsize(output_file) == 0:
-                        print(f"❌ Failed to save output for {file_name}. Exiting program!")
+                        print(f" Failed to save output for {file_name}. Exiting program!")
                         sys.exit(1)
                     else:
-                        print(f"✅ Completed UE for {file_name} → {output_file}")
+                        print(f" Completed UE for {file_name} → {output_file}")
     
                 except Exception as e:
-                    print(f"❌ Failed {file_name}: {e}")
+                    print(f" Failed {file_name}: {e}")
                     sys.exit(1)
     
     elapsed_minutes = (time.time() - start_time) / 60
-    print(f"\n✅ Finished all remaining UE iterations. Total time: {elapsed_minutes:.2f} minutes")
+    print(f"\n Finished all remaining UE iterations. Total time: {elapsed_minutes:.2f} minutes")
     # ---------------- Safe entry point for Windows ----------------
 if __name__ == "__main__":
     import multiprocessing
