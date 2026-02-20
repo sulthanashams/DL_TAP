@@ -39,9 +39,6 @@ link_change_frac = 0.75
 increase_frac=0.75
 num_od_matrices = 50
 
-# ---------------- Module-level functions ----------------
-
-
 
 
 def increase_network_size_variant(orig_tntp_file, pos_file, new_tntp_file,
@@ -158,7 +155,7 @@ def increase_network_size_variant(orig_tntp_file, pos_file, new_tntp_file,
         for _, row in net_new.iterrows():
             G_new.add_edge(row['init_node'], row['term_node'])
         if not nx.is_strongly_connected(G_new):
-            print("⚠️ Network not strongly connected. Adding repair links...")
+            print(" Network not strongly connected. Adding repair links...")
             components = list(nx.strongly_connected_components(G_new))
             largest = max(components, key=len)
             for comp in components:
@@ -195,7 +192,7 @@ def increase_network_size_variant(orig_tntp_file, pos_file, new_tntp_file,
                     f"{int(row['speed'])}\t{int(row['toll'])}\t{int(row['link_type'])}\t;\n"
                 )
 
-        print(f"✅ Size Variant #{i} saved → {new_tntp_file}")
+        print(f" Size Variant #{i} saved → {new_tntp_file}")
         print(f"Nodes: {len(set(net_new['init_node']).union(set(net_new['term_node'])))} | Links: {len(net_new)}")
         
 
@@ -471,7 +468,7 @@ def generate_od_for_variant(variant_file, save_dir, num_matrix=num_od_matrices):
     # --- Check for existing OD files ---
     existing_files = [f for f in os.listdir(save_dir) if f.endswith(".pkl")]
     if len(existing_files) >= num_matrix:
-        print(f"ℹ️ OD matrices already exist in {save_dir} (skipping generation)")
+        print(f" OD matrices already exist in {save_dir} (skipping generation)")
         return
 
     # --- Try to find a TNTP trip file (base OD) ---
@@ -481,14 +478,14 @@ def generate_od_for_variant(variant_file, save_dir, num_matrix=num_od_matrices):
 
     if trip_files:
         trip_path = os.path.join(base_dir, trip_files[0])
-        print(f"📊 Using base trip table: {trip_path}")
+        print(f" Using base trip table: {trip_path}")
         base_od = read_tntp_trip_file(trip_path)
-        print(f"✅ Parsed {len(base_od)} OD pairs from trip table.")
+        print(f" Parsed {len(base_od)} OD pairs from trip table.")
         generate_and_save_variations_od(base_od, save_dir,
                                      num_variations=num_matrix,
                                      scale_min=0.2, scale_max=1.0,
                                      missing_frac=0.3)
-        print(f"🎯 Finished generating {num_matrix} OD variations for {variant_file}")
+        print(f"Finished generating {num_matrix} OD variations for {variant_file}")
         return
 
     # --- Fall back to synthetic OD generation ---
@@ -499,7 +496,7 @@ def generate_od_for_variant(variant_file, save_dir, num_matrix=num_od_matrices):
         futures = [executor.submit(generate_and_save_od_matrix, *args)
                    for args in args_list]
         for future in as_completed(futures):
-            print(f"✅ Saved {future.result()}")
+            print(f" Saved {future.result()}")
 
 
 def solve_single_od(args):
@@ -542,7 +539,7 @@ def solve_ue_for_variant(variant_file, od_dir, output_prefix, path_file, pair_fi
         futures = [executor.submit(solve_single_od, args) for args in args_list]
         for future in as_completed(futures):
             od_file, out_file = future.result()
-            print(f"✅ UE completed: {od_file} → {out_file}")
+            print(f" UE completed: {od_file} → {out_file}")
 
 # ---------------- Main Pipeline ----------------
 
@@ -553,23 +550,23 @@ def main():
     variant_files = []
 
     # Generate all network variants
-    print(f"\n🔹 Generating {n_variants} network variants...")
+    print(f"\n Generating {n_variants} network variants...")
     for i in range(1, n_variants + 1):
         variant_file = os.path.join(variants_dir, f"variant_{i}.tntp")
         if os.path.exists(variant_file):
-            print(f"ℹ️ Variant {i} already exists → {variant_file} (skipping generation)")
+            print(f" Variant {i} already exists → {variant_file} (skipping generation)")
         else:
             generate_variant(i)
-            print(f"✅ Variant {i} saved: {variant_file}")
+            print(f" Variant {i} saved: {variant_file}")
         variant_files.append(variant_file)
 
     # Generate OD matrices for each variant
     for i, variant_file in enumerate(variant_files, start=1):
         od_dir = os.path.join(od_dir_base, f"OD_Matrices_{i}")
         if os.path.exists(od_dir) and len(os.listdir(od_dir)) >= num_od_matrices:
-            print(f"ℹ️ OD matrices for Variant {i} already exist in {od_dir} (skipping generation)")
+            print(f" OD matrices for Variant {i} already exist in {od_dir} (skipping generation)")
         else:
-            print(f"\n🔹 Generating OD matrices for Variant {i}...")
+            print(f"\n Generating OD matrices for Variant {i}...")
             generate_od_for_variant(variant_file, od_dir, num_od_matrices)
 
     # Solve UE for each variant
@@ -584,12 +581,12 @@ def main():
         existing_ue_files = [f for f in os.listdir(os.path.dirname(output_prefix))
                              if f.startswith(os.path.basename(output_prefix))]
         if existing_ue_files:
-            print(f"ℹ️ UE outputs for Variant {i} already exist → {len(existing_ue_files)} files (skipping UE)")
+            print(f" UE outputs for Variant {i} already exist → {len(existing_ue_files)} files (skipping UE)")
         else:
-            print(f"\n🔹 Solving UE for Variant {i}...")
+            print(f"\n Solving UE for Variant {i}...")
             solve_ue_for_variant(variant_file, od_dir, output_prefix, path_file, pair_file)
 
-    print("\n🎉 All variants processed successfully!")
+    print("\n All variants processed successfully!")
 
 # ---------------- Entry Point ----------------
 if __name__ == "__main__":
