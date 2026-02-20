@@ -144,7 +144,7 @@ def main():
     random.seed(42)
     remove_ids = random.sample(link_ids, num_to_remove)
 
-    print(f"🕸 Network has {len(link_ids)} links.")
+    print(f" Network has {len(link_ids)} links.")
     print(f" Removing {num_to_remove} links ({REMOVE_PERCENT}%).")
     print(f"Removed link IDs (sample): {remove_ids[:10]}")
 
