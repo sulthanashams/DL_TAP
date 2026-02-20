@@ -126,7 +126,7 @@ def add_link_ids_to_tntp(original_file, output_file):
             lineterminator='\n'
         )
 
-    print(f"✅ Saved TTNP network with link_ids to {output_file}")
+    print(f" Saved TTNP network with link_ids to {output_file}")
 
 
 def readNet(fileN) : 
@@ -339,7 +339,7 @@ def get_data(Network, Nodes, links, cap, fft, alpha, beta, lengths, OD_mat, path
     # for i in range(links):
     #     eta_max = max(eta[i])
     #     if total_link_flow[i] > eta_max:
-    #         print(f"⚠️ Link {i} has total flow {total_link_flow[i]:.2f} exceeding η_max={eta_max:.2f}")
+    #         print(f" Link {i} has total flow {total_link_flow[i]:.2f} exceeding η_max={eta_max:.2f}")
     
 #_________________________________________________________________________________
 
@@ -521,7 +521,7 @@ def TA_MSA(data, n, Q, max_iter=1000, tol=1e-4):
     path_flow = {k: [0.0] * len(paths[k]) for k in paths.keys()}
 
     for it in range(1, max_iter + 1):
-        print(f"\n🔁 MSA Iteration {it}")
+        print(f"\n MSA Iteration {it}")
 
         # Update travel times using BPR function
         for a in range(num_links):
@@ -787,40 +787,29 @@ def get_full_paths_from_folder_filtered_timed_find_paths(
     print(net_df.head())
     print(net_df.dtypes)
     print(net_df[['init_node','term_node','link_id']].head())
-    # print('preparing network Graph.....')
-    # netG = nx.from_pandas_edgelist(net_df, source='init_node', target='term_node',
-    #                             edge_attr='free_flow_time', create_using=nx.DiGraph())
-    # print('Finished.....')
-
-
-    #print("✅ Network saved with link IDs: EMA_network_with_link_ids.txt")
-    
-    
-
-
+  
     # Collect OD matrix files and randomly sample if needed
-    # --- Collect OD matrix files and handle single combined file case ---
     pkl_files = sorted(glob.glob(os.path.join(demand_dir, "*.pkl")))
     
     # If only one file exists, check if it contains multiple OD matrices
     if len(pkl_files) == 1:
         single_file = pkl_files[0]
-        print(f"🔍 Found single OD file: {os.path.basename(single_file)} — checking contents...")
+        print(f" Found single OD file: {os.path.basename(single_file)} — checking contents...")
     
         with open(single_file, 'rb') as f:
             data = pickle.load(f)
     
         # If it's a list of OD matrices, split them into separate files
         if isinstance(data, list) and len(data) > 1:
-            print(f"📦 Detected {len(data)} OD matrices inside — splitting...")
+            print(f" Detected {len(data)} OD matrices inside — splitting...")
             for i, od_matrix in enumerate(data):
                 out_path = os.path.join(demand_dir, f"od_matrix_{i+1}.pkl")
                 if not os.path.exists(out_path):  # avoid overwriting if already split
                     with open(out_path, 'wb') as f_out:
                         pickle.dump(od_matrix, f_out)
-            print(f"✅ Split complete. Created {len(data)} files.")
+            print(f" Split complete. Created {len(data)} files.")
         else:
-            print("ℹ️ Single OD matrix only — using as is.")
+            print(" Single OD matrix only — using as is.")
     
     # Reload after possible split
     pkl_files = sorted(glob.glob(os.path.join(demand_dir, "*.pkl")))
@@ -838,7 +827,7 @@ def get_full_paths_from_folder_filtered_timed_find_paths(
             global_path_set = pickle.load(f)
         with open(pair_file, 'rb') as f:
             global_pair_path = pickle.load(f)
-        print(f"🔄 Loaded {len(global_path_set)} paths, {len(global_pair_path)} OD pairs")
+        print(f" Loaded {len(global_path_set)} paths, {len(global_pair_path)} OD pairs")
     else:
         global_path_set = set()
         global_pair_path = {}
@@ -847,14 +836,14 @@ def get_full_paths_from_folder_filtered_timed_find_paths(
     
 
     for matrix_idx, od_file in enumerate(pkl_files):
-        print(f"\n📂 Processing matrix {matrix_idx+1} / {len(pkl_files)}: {os.path.basename(od_file)}")
+        print(f"\n Processing matrix {matrix_idx+1} / {len(pkl_files)}: {os.path.basename(od_file)}")
 
         with open(od_file, 'rb') as f:
             OD_matrix = pickle.load(f)
 
         unseen_pairs = [pair for pair in OD_matrix.keys() if pair not in global_pair_path]
         total_pairs = len(unseen_pairs)
-        print(f"🔢 Total unseen OD pairs in this matrix: {total_pairs}")
+        print(f" Total unseen OD pairs in this matrix: {total_pairs}")
 
         if not unseen_pairs:
             continue
@@ -888,7 +877,7 @@ def get_full_paths_from_folder_filtered_timed_find_paths(
                     for path in paths:
                         global_path_set.add(tuple(path))
                 except Exception as e:
-                    print(f"❌ Failed OD pair {od_pair}: {e}", flush=True)
+                    print(f" Failed OD pair {od_pair}: {e}", flush=True)
 
         end = time.time()
         total_time=end-start
@@ -899,10 +888,10 @@ def get_full_paths_from_folder_filtered_timed_find_paths(
         with open(pair_file, 'wb') as f:
             pickle.dump(global_pair_path, f)
 
-        print(f"✅ Completed matrix {matrix_idx+1} in {total_time:.2f}s . Total OD pairs now: {len(global_pair_path)}", flush=True)
+        print(f" Completed matrix {matrix_idx+1} in {total_time:.2f}s . Total OD pairs now: {len(global_pair_path)}", flush=True)
 
     path_set_dict = {v: k for k, v in enumerate(global_path_set, start=1)}
-    print(f"\n🎯 Path generation complete: {len(global_path_set)} unique paths, {len(global_pair_path)} OD pairs", flush=True)
+    print(f"\n Path generation complete: {len(global_path_set)} unique paths, {len(global_pair_path)} OD pairs", flush=True)
     return path_set_dict, global_pair_path
 
 
@@ -931,7 +920,7 @@ def solve_UE(net_file, demand_file, pair_path, output_file, base_number, to_solv
 
     time_step = 0
     for OD_matrix in tqdm(stat[:to_solve]):
-        print(f"\n🧩 Solving UE for OD_Matrix {base_number}")
+        print(f"\n Solving UE for OD_Matrix {base_number}")
 
         # --- Identify missing OD pairs ---
         od_pairs = set(OD_matrix.keys())
@@ -943,15 +932,15 @@ def solve_UE(net_file, demand_file, pair_path, output_file, base_number, to_solv
         missing_count = len(missing_pairs)
         missing_pct = (missing_count / total_pairs) * 100 if total_pairs > 0 else 0
 
-        print(f"📊 Total OD pairs: {total_pairs}")
-        print(f"✅ Pairs with paths: {len(available_pairs)} ({100 - missing_pct:.2f}%)")
+        print(f" Total OD pairs: {total_pairs}")
+        print(f" Pairs with paths: {len(available_pairs)} ({100 - missing_pct:.2f}%)")
         if missing_count > 0:
-            print(f"⚠️ Missing pairs: {missing_count} ({missing_pct:.2f}%)")
+            print(f" Missing pairs: {missing_count} ({missing_pct:.2f}%)")
             print(f"   Examples of missing pairs: {list(missing_pairs)[:5]}")
 
         # --- Skip if no pairs have paths ---
         if len(available_pairs) == 0:
-            print(f"❌ No feasible OD pairs in iteration {time_step}. Skipping this UE run.")
+            print(f" No feasible OD pairs in iteration {time_step}. Skipping this UE run.")
             time_step += 1
             continue
 
@@ -975,10 +964,10 @@ def solve_UE(net_file, demand_file, pair_path, output_file, base_number, to_solv
         try:
             with open(output_file, "wb") as f:  # use output_file directly
                 pickle.dump(dataa, f)
-            #print(f"✅ Saved UE result: {output_file}")
+            #print(f" Saved UE result: {output_file}")
         except OSError as e:
             if "No space" in str(e) or "disk full" in str(e).lower():
-                print("❌ ERROR: No disk space left. Stopping program.")
+                print(" ERROR: No disk space left. Stopping program.")
                 import sys
                 sys.exit(1)
             else:
