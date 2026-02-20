@@ -34,7 +34,7 @@ print(f"Capacity: min={capacity.min()}, max={capacity.max()}, mean={capacity.mea
 all_demands = []
 
 if os.path.isdir(od_dir):
-    print(f"📁 Loading OD matrices from folder: {od_dir}")
+    print(f" Loading OD matrices from folder: {od_dir}")
     od_files = sorted([f for f in os.listdir(od_dir) if f.endswith(".pkl")])
     for file in tqdm(od_files, desc="Loading OD matrices"):
         path = os.path.join(od_dir, file)
