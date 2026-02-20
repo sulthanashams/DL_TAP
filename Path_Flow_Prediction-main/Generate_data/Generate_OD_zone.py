@@ -4,7 +4,7 @@ import random
 import pickle
 from tqdm import tqdm
 
-# Step 1: Parse the TNTP trip file
+
 def read_tntp_trip_file(file_path):
     """
     Parses a TNTP-format OD trip file and returns a dict {(origin, destination): demand}.
@@ -67,7 +67,7 @@ def generate_and_save_variations(base_od, save_dir, num_variations=4000,
                 pickle.dump(new_od, f)
             file_paths.append(file_path)
         except Exception as e:
-            print(f"❌ Error generating matrix {i}: {e}")
+            print(f" Error generating matrix {i}: {e}")
     
     return file_paths
 
@@ -78,7 +78,7 @@ def diagnostic_check(file_paths, base_od, num_samples=5):
     Load two random OD matrices and compare random OD pairs to the baseline.
     """
     if len(file_paths) < 2:
-        print("⚠️ Not enough OD matrices to compare. Skipping diagnostic.")
+        print("Not enough OD matrices to compare. Skipping diagnostic.")
         return
     
     sample_files = random.sample(file_paths, 2)
@@ -111,11 +111,11 @@ if __name__ == "__main__":
     save_dir = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\Anaheim\OD_Matrices"
    
     base_od = read_tntp_trip_file(base_file)
-    print(f"✅ Parsed {len(base_od)} OD pairs from {os.path.basename(base_file)}")
+    print(f"Parsed {len(base_od)} OD pairs from {os.path.basename(base_file)}")
 
-    # 🟢 Print min and max OD demand values
+    # Print min and max OD demand values
     od_values = list(base_od.values())
-    print(f"📊 Base OD demand range → min: {min(od_values):.2f}, max: {max(od_values):.2f}")
+    print(f" Base OD demand range → min: {min(od_values):.2f}, max: {max(od_values):.2f}")
 
 
     
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         base_od, save_dir, num_variations=4000, scale_min=0.2, scale_max=1.0, missing_frac=0.5
     )
 
-    print("🎯 Finished generating all OD variations.")
+    print("Finished generating all OD variations.")
     diagnostic_check(file_paths, base_od, num_samples=8)
 
 
