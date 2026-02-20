@@ -27,9 +27,9 @@ print("Available GPUs:", gpus)
 # Assign this session to GPU 1 (the second GPU)
 if len(gpus) > 1:
     tf.config.set_visible_devices(gpus[1], 'GPU')
-    print("✅ Using GPU 1 for this session")
+    print(" Using GPU 1 for this session")
 else:
-    print("⚠️ Only one GPU detected, using default GPU 0")
+    print(" Only one GPU detected, using default GPU 0")
 
 # Optional: allow memory growth to prevent OOM errors
 tf.config.experimental.set_memory_growth(gpus[1], True)
@@ -102,7 +102,7 @@ def evaluate_multiple_variants(model, base_variant_dir, train_scaler):
             print(f" Skipping missing folder: {variant_folder}")
             continue
 
-        print(f"\n🔹 Evaluating SiouxFalls Topology Variant #{i} ...")
+        print(f"\n Evaluating SiouxFalls Topology Variant #{i} ...")
 
         unique_path_file = os.path.join(variant_folder, "unique_paths.pkl")
         if not os.path.exists(unique_path_file):
@@ -128,7 +128,7 @@ def evaluate_multiple_variants(model, base_variant_dir, train_scaler):
         all_pred_delay.append(p)
         all_sol_delay.append(s)
    
-        # 🆕 store percentages for each variant
+        #  store percentages for each variant
         pred_pct = (p / np.mean(pred_mean_cost)) * 100
         sol_pct = (s / np.mean(UE_mean_path_cost)) * 100
         all_pred_delay_pct.append(pred_pct)
@@ -142,18 +142,18 @@ def evaluate_multiple_variants(model, base_variant_dir, train_scaler):
         'Path flow': [np.mean(all_mae_path), np.mean(all_rmse_path), np.mean(all_mape_path)]
     })
    
-    print("\n📊 === Final Mean Results Across Topological Variants ===")
+    print("\n === Final Mean Results Across Topological Variants ===")
     print(result_mean)
     print("Mean Prediction Delay:", round(np.mean(all_pred_delay), 3), "mins")
     print("Mean Solution Delay:", round(np.mean(all_sol_delay), 3), "mins")
     print("Mean Difference:", round(np.mean(np.array(all_pred_delay) - np.array(all_sol_delay)), 3), "mins")
 
-    # 🆕 percentage delays
+    #  percentage delays
     print("Mean Prediction Delay (%):", round(np.mean(all_pred_delay_pct), 3), "%")
     print("Mean Solution Delay (%):", round(np.mean(all_sol_delay_pct), 3), "%")
     print("Mean Difference (%):", round(np.mean(np.array(all_pred_delay_pct) - np.array(all_sol_delay_pct)), 3), "%")
 
-    # --- 🆕 Box plot of mean prediction delay only ---
+    # ---  Box plot of mean prediction delay only ---
     plt.figure(figsize=(8, 5))
     sns.boxplot(y=all_pred_delay, color='cornflowerblue', width=0.4)
     sns.stripplot(y=all_pred_delay, color='darkblue', size=6, jitter=True, alpha=0.7)
@@ -184,10 +184,10 @@ def main():
     # MODEL: Load existing full model or train a new one
     # ----------------------------------------------------------
     if os.path.exists(MODEL_DIR):
-        print(f"⚙️ Found existing model in '{MODEL_DIR}', loading it...")
+        print(f" Found existing model in '{MODEL_DIR}', loading it...")
         model = tf.keras.models.load_model(MODEL_DIR, compile=False)
     else:
-        print("🚀 No saved model found — training a new Transformer model...")
+        print(" No saved model found — training a new Transformer model...")
         model = Transformer(input_dim=input_dim, output_dim=output_dim,
                             d_model=d_model, E_layer=E_layer, D_layer=D_layer,
                             heads=heads, dropout=dropout, l2_reg=l2_reg)
@@ -198,53 +198,34 @@ def main():
         model, train_loss, val_loss = model.fit(train_data_loader, val_data_loader,
                                                 optimizer, loss_fn, epochs, device)
         end = time()
-        print("✅ Finish training in:", round((end-start)/3600, 2), "hours")
+        print(" Finish training in:", round((end-start)/3600, 2), "hours")
 
         # Plot and save training history
         plot_loss(train_loss, val_loss, epochs, TRAIN_HISTORY_TITLE)
 
       
-       # # # ✅ Save full model
-       # # ----------------------------------------------------------
-       # # ✅ Save or Rebuild Model 
+       # # #  Save full model
        # # ----------------------------------------------------------
 
 
-       # # 1️⃣ Ensure model folder exists
+
+       # #  Ensure model folder exists
        #  if not os.path.exists(MODEL_DIR):
-       #     print(f"⚠️ Model folder not found at {MODEL_DIR}. Saving current model...")
+       #     print(f" Model folder not found at {MODEL_DIR}. Saving current model...")
        #     os.makedirs(os.path.dirname(MODEL_DIR), exist_ok=True)
        #     model.save(MODEL_DIR, save_format="tf")
-       #     print(f"✅ Full Transformer model saved to '{MODEL_DIR}'")
+       #     print(f" Full Transformer model saved to '{MODEL_DIR}'")
        #  else:
-       #     print(f"⚙️ Found existing model at '{MODEL_DIR}', loading it...")
+       #     print(f" Found existing model at '{MODEL_DIR}', loading it...")
        #     model = tf.keras.models.load_model(MODEL_DIR, compile=False)
 
-       # # 2️⃣ Rebuild flexible-input wrapper
-       #  print("🔧 Rebuilding model with flexible input shapes...")
-       #  try:
-       #     x_input = Input(shape=(None, input_dim), name="x")
-       #     y_input = Input(shape=(None, output_dim), name="y")
-
-       #     # Use functional call
-       #     output = model(x_input, y_input)
-
-       #     keras_model = Model(inputs=[x_input, y_input], outputs=output)
-
-       #     # 3️⃣ Save new flexible version
-       #     flex_path = MODEL_DIR + "_flex"
-       #     keras_model.save(flex_path, include_optimizer=False)
-       #     print(f"✅ Saved flexible-input model to '{flex_path}'")
-
-       #  except Exception as e:
-       #     print(f"❌ Error rebuilding flexible model: {e}")
-       #     print("ℹ️ Proceeding with loaded model as-is (fixed input shape).")
+   
       
 
           # --- inside your main() after model is loaded and trained ---
     base_variant_dir = r"E:\sshams\DL_TAP\Path_Flow_Prediction-main\Generate_data\SiouxFalls\Size_Variants_25_test/UE_Output"
        
-    print("\n🚀 Evaluating model on 10 SiouxFalls topology variants...")
+    print("\n Evaluating model on 10 SiouxFalls topology variants...")
     final_result = evaluate_multiple_variants(model, base_variant_dir, train_scaler)
 
 
