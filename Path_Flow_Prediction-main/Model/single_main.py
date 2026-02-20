@@ -23,9 +23,9 @@ print("Available GPUs:", gpus)
 # Assign this session to GPU 1 (the second GPU)
 if len(gpus) > 1:
     tf.config.set_visible_devices(gpus[1], 'GPU')
-    print("✅ Using GPU 1 for this session")
+    print(" Using GPU 1 for this session")
 else:
-    print("⚠️ Only one GPU detected, using default GPU 0")
+    print(" Only one GPU detected, using default GPU 0")
 
 # Optional: allow memory growth to prevent OOM errors
 tf.config.experimental.set_memory_growth(gpus[1], True)
@@ -74,29 +74,14 @@ def main():
         # Get the results
         train_data_loader = future_train.result()
         val_data_loader = future_val.result()
-
-    # # TRAIN MODEL
-    # model = Transformer(input_dim=input_dim, output_dim=output_dim,
-    #                     d_model=d_model, E_layer=E_layer, D_layer=D_layer,
-    #                     heads=heads, dropout=dropout, l2_reg=l2_reg)
-    # print("Training will run on:", tf.config.list_logical_devices('GPU'))
-
-    # loss_fn = MeanSquaredError()
-    # optimizer = Adam(learning_rate=learning_rate, clipvalue=1.0, decay=l2_reg)
-    # start = time()
-    # model, train_loss, val_loss = model.fit(train_data_loader, val_data_loader, optimizer, loss_fn, epochs, device)
-
-    
-    # end = time()
-    # print("Finish training in: ", round((end-start)/3600, 2), "hours")
     
     # MODEL: Load existing full model or train a new one
     # ----------------------------------------------------------
     if os.path.exists(MODEL_DIR):
-        print(f"⚙️ Found existing model in '{MODEL_DIR}', loading it...")
+        print(f" Found existing model in '{MODEL_DIR}', loading it...")
         model = tf.keras.models.load_model(MODEL_DIR, compile=False)
     else:
-        print("🚀 No saved model found — training a new Transformer model...")
+        print(" No saved model found — training a new Transformer model...")
         model = Transformer(input_dim=input_dim, output_dim=output_dim,
                             d_model=d_model, E_layer=E_layer, D_layer=D_layer,
                             heads=heads, dropout=dropout, l2_reg=l2_reg)
@@ -107,7 +92,7 @@ def main():
         model, train_loss, val_loss = model.fit(train_data_loader, val_data_loader,
                                                 optimizer, loss_fn, epochs, device)
         end = time()
-        print("✅ Finish training in:", round((end-start)/3600, 2), "hours")
+        print(" Finish training in:", round((end-start)/3600, 2), "hours")
 
         # Plot and save training history
         plot_loss(train_loss, val_loss, epochs, TRAIN_HISTORY_TITLE)
