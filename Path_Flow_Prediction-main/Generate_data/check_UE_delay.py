@@ -144,7 +144,7 @@ def calculate_delay(pred_df, pred_link_flow):
 
 
 # -------------------------
-# 3️⃣ Main Function
+#  Main Function
 # -------------------------
 
 def main():
@@ -167,19 +167,19 @@ def main():
             avg_delays.append(delay)
             mean_costs.append(mean_cost)
         except Exception as e:
-            print(f"❌ Error reading {file_name}: {e}")
+            print(f" Error reading {file_name}: {e}")
 
     overall_delay = np.mean(avg_delays)
     overall_mean_cost = np.mean(mean_costs)
 
     print("\n-------------------------------")
-    print(f"✅ Mean path cost: {overall_mean_cost:.3f} mins")
-    print(f"✅ Average UE delay: {overall_delay:.3f} mins = {round(overall_delay / overall_mean_cost * 100, 3)}%")
+    print(f" Mean path cost: {overall_mean_cost:.3f} mins")
+    print(f" Average UE delay: {overall_delay:.3f} mins = {round(overall_delay / overall_mean_cost * 100, 3)}%")
     print("-------------------------------")
 
 
 # -------------------------
-# 4️⃣ Run the script
+#  Run the script
 # -------------------------
 if __name__ == "__main__":
     main()
