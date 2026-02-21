@@ -34,7 +34,7 @@ plotting.py: plotting charts
 
 HOW TO USE:
 
-The data for SiouxFalls [OD_Matrices, UE_Solutions and path set] are given for reference on how to run. In the same manner, data for EMA and Anaheim can be generated. Their network files are already included.
+The sample data for SiouxFalls [OD_Matrices, UE_Solutions and path set] are given for reference on how to generate. In the same manner, data for EMA and Anaheim can be generated. Their network files are already included.
 
 Running
 1. Check file Generate_OD  to generate new demand. 
