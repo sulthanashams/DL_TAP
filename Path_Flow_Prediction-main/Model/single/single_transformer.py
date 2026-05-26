@@ -198,9 +198,10 @@ def predict_withScaler(model, test_data_loader, scalers, device):
     scaler_idx = 0
     for src, trg in test_data_loader:
         with tf.device(device):
-            # output = model.predict(src, src_mask, tgt_mask)
+            decoder_input = tf.zeros((tf.shape(src)[0], tf.shape(src)[1], 3))
+            
             start = time.time()
-            output = model.call(src, trg)
+            output = model.call(src, decoder_input, training=False)
             end = time.time()
             print("Finish predicting in: ", round((end-start)/len(src),4), "seconds/data point")
             for i in range(len(src)):
